@@ -6,16 +6,19 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:react/jsx-runtime",
     "plugin:react-hooks/recommended",
-    "react-app",
   ],
   ignorePatterns: ["dist", ".eslintrc.cjs"],
   parserOptions: { ecmaVersion: "latest", sourceType: "module" },
   settings: { react: { version: "18.2" } },
   plugins: ["react-refresh"],
   rules: {
+    ...js.configs.recommended.rules,
+    ...reactHooks.configs.recommended.rules,
+    "no-unused-vars": ["warn", { varsIgnorePattern: "^[A-Z_]" }],
     "react-refresh/only-export-components": [
       "warn",
       { allowConstantExport: true },
     ],
+    "react/prop-types": "off",
   },
 };
