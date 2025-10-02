@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const FileInput = styled.input`
+const FileInput = styled.input.attrs("jpg,png,svg,jpeg")`
   font-size: 1.4rem;
   border-radius: var(--border-radius-sm);
 
