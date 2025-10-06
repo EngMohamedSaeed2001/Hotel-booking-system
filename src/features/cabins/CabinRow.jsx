@@ -1,22 +1,27 @@
 import styled from "styled-components";
 import { formatCurrency } from "../../utils/helpers";
 
-import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm";
 import { useDeleteCabin } from "./useDeleteCabinHook";
 import { HiDuplicate, HiPencil, HiTrash } from "react-icons/hi";
 import { useCreateCabin } from "./useCreateCabinHook";
-const TableRow = styled.div`
-  display: grid;
-  grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
-  column-gap: 2.4rem;
-  align-items: center;
-  padding: 1.4rem 2.4rem;
 
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--color-grey-100);
-  }
-`;
+import Modal from "../../ui/Modal";
+import ConfirmDelete from "../../ui/ConfirmDelete";
+import Table from "../../ui/Table";
+import Menus from "../../ui/Menus";
+
+// const TableRow = styled.div`
+//   display: grid;
+//   grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
+//   column-gap: 2.4rem;
+//   align-items: center;
+//   padding: 1.4rem 2.4rem;
+
+//   &:not(:last-child) {
+//     border-bottom: 1px solid var(--color-grey-100);
+//   }
+// `;
 
 const Img = styled.img`
   display: block;
@@ -46,9 +51,15 @@ const Discount = styled.div`
 `;
 
 function CabinRow({ cabin }) {
-  const [show, setShow] = useState(false);
-  const { id, name, image, maxCapacity, discount, regularPrice, description } =
-    cabin;
+  const {
+    id: cabinId,
+    name,
+    image,
+    maxCapacity,
+    discount,
+    regularPrice,
+    description,
+  } = cabin;
 
   const { isLoading, deleteCabin } = useDeleteCabin();
   const { isCreating, createCabin } = useCreateCabin();
@@ -64,32 +75,69 @@ function CabinRow({ cabin }) {
     });
   }
   return (
-    <>
-      <TableRow role="row">
-        <Img src={image} alt={name} />
-        <Cabin>{name}</Cabin>
-        <div>Fits up to {maxCapacity} guests</div>
-        <Price>{formatCurrency(regularPrice)}</Price>
-        {discount > 0 ? (
-          <Discount>{formatCurrency(discount)}</Discount>
-        ) : (
-          <span>&mdash;</span>
-        )}
+    <Table.Row columns="0.6fr 1.8fr 2.2fr 1fr 1fr 1fr">
+      <Img src={image} alt={name} />
+      <Cabin>{name}</Cabin>
+      <div>Fits up to {maxCapacity} guests</div>
+      <Price>{formatCurrency(regularPrice)}</Price>
+      {discount > 0 ? (
+        <Discount>{formatCurrency(discount)}</Discount>
+      ) : (
+        <span>&mdash;</span>
+      )}
 
-        <div>
-          <button onClick={() => setShow(!show)}>
-            <HiPencil />
-          </button>
-          <button disabled={isCreating} onClick={handleDuplicate}>
-            <HiDuplicate />
-          </button>
-          <button disabled={isLoading} onClick={() => deleteCabin(id)}>
-            <HiTrash />
-          </button>
-        </div>
-      </TableRow>
-      {show && <CreateCabinForm editCabin={cabin} setShow={setShow} />}
-    </>
+      <Modal>
+        <Menus.Menu>
+          <Menus.Toggle id={cabinId} />
+
+          <Menus.List id={cabinId}>
+            <Modal.Open
+              opens="editCabin"
+              renderButton={(openFunc) => (
+                <Menus.Button icon={<HiPencil />} onClick={openFunc}>
+                  {" "}
+                  Edit
+                </Menus.Button>
+              )}
+            />
+
+            <Modal.Window
+              name="editCabin"
+              renderClose={(closeFunc) => (
+                <CreateCabinForm onClose={closeFunc} editCabin={cabin} />
+              )}
+            />
+
+            <Modal.Open
+              opens="deleteCabin"
+              renderButton={(openFunc) => (
+                <Menus.Button icon={<HiTrash />} onClick={openFunc}>
+                  {" "}
+                  Delete
+                </Menus.Button>
+              )}
+            />
+            <Modal.Window
+              name="deleteCabin"
+              renderClose={(closeFunc) => (
+                <ConfirmDelete
+                  resource={`Cabin ${name}`}
+                  onConfirm={() => {
+                    deleteCabin(cabinId);
+                  }}
+                  onClose={closeFunc}
+                  disabled={isLoading}
+                />
+              )}
+            />
+
+            <Menus.Button icon={<HiDuplicate />} onClick={handleDuplicate}>
+              Duplicate
+            </Menus.Button>
+          </Menus.List>
+        </Menus.Menu>
+      </Modal>
+    </Table.Row>
   );
 }
 

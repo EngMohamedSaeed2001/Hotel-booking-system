@@ -9,7 +9,7 @@ import FormRow from "../../ui/FormRow";
 import { useCreateCabin } from "./useCreateCabinHook";
 import { useUpdateCabin } from "./useUpdateCabinHook";
 
-function CreateCabinForm({ setShow, editCabin = {} }) {
+function CreateCabinForm({ onClose, editCabin = {} }) {
   const { id: editedId, ...editedValues } = editCabin;
   const isEdit = Boolean(editedId);
   const { register, handleSubmit, reset, getValues, formState } = useForm({
@@ -25,15 +25,23 @@ function CreateCabinForm({ setShow, editCabin = {} }) {
     const image = typeof data.image === "string" ? data.image : data.image[0];
 
     if (isEdit) {
-      updateCabin({ newCabinData: { ...data, image }, id: editedId }),
+      updateCabin(
+        { newCabinData: { ...data, image }, id: editedId },
         {
-          onSuccess: (data) => reset(data),
-        };
+          onSuccess: (data) => {
+            reset(data);
+            onClose?.();
+          },
+        }
+      );
     } else
       createCabin(
         { ...data, image: image },
         {
-          onSuccess: (data) => reset(data),
+          onSuccess: (data) => {
+            reset(data);
+            onClose?.();
+          },
         }
       );
   }
@@ -42,7 +50,10 @@ function CreateCabinForm({ setShow, editCabin = {} }) {
     // console.log(errors);
   }
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      type={onClose ? "modal" : "regular"}
+    >
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -128,11 +139,7 @@ function CreateCabinForm({ setShow, editCabin = {} }) {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button
-          variation="secondary"
-          onClick={() => setShow(false)}
-          type="reset"
-        >
+        <Button variation="secondary" onClick={() => onClose?.()} type="reset">
           Cancel
         </Button>
         <Button disabled={isWorking}>
