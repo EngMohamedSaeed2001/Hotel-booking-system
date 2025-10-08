@@ -83,7 +83,7 @@ function Window({ renderClose, name }) {
 
   return createPortal(
     <Overlay>
-      <StyledModal ref={ref}>
+      <StyledModal ref={ref} onClick={(e) => e.stopPropagation()}>
         <Button onClick={close}>
           <HiXMark />
         </Button>
