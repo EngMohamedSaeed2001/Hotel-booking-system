@@ -5,6 +5,7 @@ React query for managing remote states <br/>
 React form hook for managing forms and validations<br/>
 Subabase (backend)<br/>
 Styling with Styled-component<br/>
+Recharts@2 for Graph <br/>
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
