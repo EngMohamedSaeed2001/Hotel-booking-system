@@ -3,6 +3,7 @@ Tech:<br/>
 Context-API for managing local states<br/>
 React query for managing remote states <br/>
 React form hook for managing forms and validations<br/>
+React Error boundary for handling unexpectad Errors <br/>
 Subabase (backend)<br/>
 Styling with Styled-component<br/>
 Recharts@2 for Graph <br/>
