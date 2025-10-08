@@ -9,6 +9,7 @@ import Button from "../../ui/Button";
 import ButtonText from "../../ui/ButtonText";
 import Spinner from "../../ui/Spinner";
 import Modal from "../../ui/Modal";
+import Empty from "../../ui/Empty";
 import { useMoveBack } from "../../hooks/useMoveBack";
 import { useBooking } from "./useBooking";
 import { useNavigate } from "react-router-dom";
@@ -30,13 +31,17 @@ const HeadingGroup = styled.div`
 function BookingDetail() {
   const { isLoading, booking } = useBooking();
   const navigate = useNavigate();
-  const { status, id: bookingId } = booking || {};
 
   const moveBack = useMoveBack();
 
   const { isCheckout, checkOut } = useCheckOut();
   const { isDeleting, deleteBooking } = useDeleteBooking();
+
   if (isLoading) return <Spinner />;
+
+  if (!booking) return <Empty resource="booking" />;
+
+  const { status, id: bookingId } = booking || {};
 
   const statusToTagName = {
     unconfirmed: "blue",

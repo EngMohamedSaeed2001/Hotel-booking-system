@@ -16,5 +16,5 @@ export function useOutsideClose(handler, listenCapturing = true) {
       document.removeEventListener("click", handleClick, listenCapturing);
   }, [handler, listenCapturing]);
 
-  return { ref };
+  return ref;
 }
